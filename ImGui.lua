@@ -1,6 +1,7 @@
 project "ImGui"
     kind "SharedLib"
     language "C++"
+    staticruntime "Off"
 
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -12,6 +13,7 @@ project "ImGui"
         "imgui.cpp",
         "imgui_draw.cpp",
         "imgui_internal.h",
+        "imgui_tables.cpp",
         "imgui_widgets.cpp",
         "imstb_rectpack.h",
         "imstb_textedit.h",
@@ -21,20 +23,17 @@ project "ImGui"
 
     filter "system:windows"
         cppdialect "C++20"
-        staticruntime "On"
         systemversion "latest"
 
     filter "configurations:Debug"
-        staticruntime "On"
         runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
-        staticruntime "On"
         runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"
-        staticruntime "On"
         runtime "Release"
         optimize "On"
+        symbols "Off"
