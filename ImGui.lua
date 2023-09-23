@@ -1,10 +1,10 @@
 project "ImGui"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
-    staticruntime "Off"
+    staticruntime "on"
 
-    targetdir("bin/" .. outputdir .. "/%{prj.name}")
-    objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+    objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
