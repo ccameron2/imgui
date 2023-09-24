@@ -6,8 +6,18 @@ project "ImGui"
     targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
     objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+    includedirs
+    {
+        "./",
+        "../SDL/include"
+    }
+
     files
     {
+        "backends/imgui_impl_sdlrenderer3.h",
+        "backends/imgui_impl_sdlrenderer3.cpp",
+        "backends/imgui_impl_sdl3.h",
+        "backends/imgui_impl_sdl3.cpp",
         "imconfig.h",
         "imgui.h",
         "imgui.cpp",
