@@ -14,8 +14,8 @@ project "ImGui"
 
     files
     {
-        "backends/imgui_impl_sdlrenderer3.h",
-        "backends/imgui_impl_sdlrenderer3.cpp",
+        "backends/imgui_impl_dx12.h",
+        "backends/imgui_impl_dx12.cpp",
         "backends/imgui_impl_sdl3.h",
         "backends/imgui_impl_sdl3.cpp",
         "imconfig.h",
