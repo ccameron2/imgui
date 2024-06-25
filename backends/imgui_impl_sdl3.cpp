@@ -130,7 +130,6 @@ static void ImGui_ImplSDL3_SetClipboardText(void*, const char* text)
 
 static void ImGui_ImplSDL3_SetPlatformImeData(ImGuiViewport* viewport, ImGuiPlatformImeData* data)
 {
-    auto window = SDL_GetWindowFromID(0);
     if (data->WantVisible)
     {
         SDL_Rect r;
@@ -138,12 +137,12 @@ static void ImGui_ImplSDL3_SetPlatformImeData(ImGuiViewport* viewport, ImGuiPlat
         r.y = (int)(data->InputPos.y - viewport->Pos.y + data->InputLineHeight);
         r.w = 1;
         r.h = (int)data->InputLineHeight;
-        SDL_SetTextInputRect(window, &r);
-        SDL_StartTextInput(window);
+        SDL_SetTextInputRect(&r);
+        SDL_StartTextInput();
     }
     else
     {
-        SDL_StopTextInput(window);
+        SDL_StopTextInput();
     }
 }
 
@@ -346,10 +345,10 @@ bool ImGui_ImplSDL3_ProcessEvent(const SDL_Event* event)
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP:
         {
-            ImGui_ImplSDL3_UpdateKeyModifiers((SDL_Keymod)event->key.mod);
-            ImGuiKey key = ImGui_ImplSDL3_KeycodeToImGuiKey(event->key.key);
+            ImGui_ImplSDL3_UpdateKeyModifiers((SDL_Keymod)event->key.keysym.mod);
+            ImGuiKey key = ImGui_ImplSDL3_KeycodeToImGuiKey(event->key.keysym.sym);
             io.AddKeyEvent(key, (event->type == SDL_EVENT_KEY_DOWN));
-            io.SetKeyEventNativeData(key, event->key.key, event->key.scancode, event->key.scancode); // To support legacy indexing (<1.87 user code). Legacy backend uses SDLK_*** as indices to IsKeyXXX() functions.
+            io.SetKeyEventNativeData(key, event->key.keysym.sym, event->key.keysym.scancode, event->key.keysym.scancode); // To support legacy indexing (<1.87 user code). Legacy backend uses SDLK_*** as indices to IsKeyXXX() functions.
             return true;
         }
         case SDL_EVENT_DISPLAY_ORIENTATION:
