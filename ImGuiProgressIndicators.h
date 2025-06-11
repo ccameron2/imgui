@@ -2,13 +2,13 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include <cmath>
 
 // https://github.com/ocornut/imgui/issues/1901
 // Edited spinner to take an offset
 
 namespace ImGui
 {
-
     inline bool BufferingBar(const char* label, float value, const ImVec2& size_arg, const ImU32& bg_col, const ImU32& fg_col)
     {
         ImGuiWindow* window = GetCurrentWindow();
@@ -54,7 +54,7 @@ namespace ImGui
         return true;
     }
 
-    inline bool Spinner(const char* label, float radius, int thickness, const ImU32& color, float offsetX = 0, float offsetY = 0)
+    inline bool SpinnerInternal(const char* label, float radius, float thickness, const ImU32& colour, float offsetX = 0, float offsetY = 0)
     {
         ImGuiWindow* window = GetCurrentWindow();
         if (window->SkipItems)
@@ -77,23 +77,36 @@ namespace ImGui
         // Render
         window->DrawList->PathClear();
 
-        int num_segments = 30;
-        int start = (int)abs(ImSin((float)g.Time * 1.8f) * (num_segments - 5));
+        float numSegments = 30;
+        float start = std::fabs(ImSin((float)g.Time * 1.8f) * (numSegments - 5.0f));
 
-        const float a_min = IM_PI * 2.0f * ((float)start) / (float)num_segments;
-        const float a_max = IM_PI * 2.0f * ((float)num_segments - 3) / (float)num_segments;
+        const float aMin = IM_PI * 2.0f * (start) / numSegments;
+        const float aMax = IM_PI * 2.0f * (numSegments - 3) / numSegments;
 
         const ImVec2 centre = ImVec2(pos.x + radius, pos.y + radius + style.FramePadding.y);
 
-        for (int i = 0; i < num_segments; i++)
+        for (int i = 0; (float)i < numSegments; i++)
         {
-            const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-            window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + (float)g.Time * 8) * radius,
-                centre.y + ImSin(a + (float)g.Time * 8) * radius));
+            const float a = aMin + (float)i / numSegments * (aMax - aMin);
+            window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + g.Time * 8) * radius,
+                                                centre.y + ImSin(a + g.Time * 8) * radius));
         }
 
-        window->DrawList->PathStroke(color, false, (float)thickness);
+        window->DrawList->PathStroke(colour, false, thickness);
         return true;
     }
+
+    inline bool Spinner(const char* label, float radius, float thickness, const ImU32& colour, float offsetX = 0, float offsetY = 0, ImGuiDockNode* dockNode = nullptr)
+    {
+        if (dockNode)
+        {
+            offsetX += dockNode->Pos.x;
+            offsetY += dockNode->Pos.y;
+        }
+
+        return SpinnerInternal(label, radius, thickness, colour, offsetX, offsetY);
+    }
+
+
 
 }
