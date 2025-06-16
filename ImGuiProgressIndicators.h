@@ -3,9 +3,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include <cmath>
-
-// https://github.com/ocornut/imgui/issues/1901
-// Edited spinner to take an offset
+#include <numbers>
 
 namespace ImGui
 {
@@ -36,7 +34,7 @@ namespace ImGui
         window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + circleStart, bb.Max.y), bg_col);
         window->DrawList->AddRectFilled(bb.Min, ImVec2(pos.x + circleStart * value, bb.Max.y), fg_col);
 
-        const float t = (float)g.Time;
+        const float t = static_cast<float>(g.Time);
         const float r = size.y / 2;
         const float speed = 1.5f;
 
@@ -44,9 +42,9 @@ namespace ImGui
         const float b = speed * 0.333f;
         const float c = speed * 0.666f;
 
-        const float o1 = (circleWidth + r) * (t + a - speed * (int)((t + a) / speed)) / speed;
-        const float o2 = (circleWidth + r) * (t + b - speed * (int)((t + b) / speed)) / speed;
-        const float o3 = (circleWidth + r) * (t + c - speed * (int)((t + c) / speed)) / speed;
+        const float o1 = (circleWidth + r) * (t + a - speed * static_cast<int>((t + a) / speed)) / speed;
+        const float o2 = (circleWidth + r) * (t + b - speed * static_cast<int>((t + b) / speed)) / speed;
+        const float o3 = (circleWidth + r) * (t + c - speed * static_cast<int>((t + c) / speed)) / speed;
 
         window->DrawList->AddCircleFilled(ImVec2(pos.x + circleEnd - o1, bb.Min.y + r), r, bg_col);
         window->DrawList->AddCircleFilled(ImVec2(pos.x + circleEnd - o2, bb.Min.y + r), r, bg_col);
@@ -78,25 +76,25 @@ namespace ImGui
         window->DrawList->PathClear();
 
         float numSegments = 30;
-        float start = std::fabs(ImSin((float)g.Time * 1.8f) * (numSegments - 5.0f));
+        float start = std::fabs(ImSin(static_cast<float>(g.Time) * 1.8f) * (numSegments - 5.0f));
 
-        const float aMin = IM_PI * 2.0f * (start) / numSegments;
-        const float aMax = IM_PI * 2.0f * (numSegments - 3) / numSegments;
+        const float aMin = std::numbers::pi_v<float> * 2.0f * (start) / numSegments;
+        const float aMax = std::numbers::pi_v<float> * 2.0f * (numSegments - 3) / numSegments;
 
         const ImVec2 centre = ImVec2(pos.x + radius, pos.y + radius + style.FramePadding.y);
 
-        for (int i = 0; (float)i < numSegments; i++)
+        for (int i = 0; static_cast<float>(i) < numSegments; i++)
         {
-            const float a = aMin + (float)i / numSegments * (aMax - aMin);
-            window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + g.Time * 8) * radius,
-                                                centre.y + ImSin(a + g.Time * 8) * radius));
+            const float a = aMin + static_cast<float>(i) / numSegments * (aMax - aMin);
+            window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + static_cast<float>(g.Time) * 8) * radius,
+                                                centre.y + ImSin(a + static_cast<float>(g.Time) * 8) * radius));
         }
 
         window->DrawList->PathStroke(colour, false, thickness);
         return true;
     }
 
-    inline bool Spinner(const char* label, float radius, float thickness, const ImU32& colour, float offsetX = 0, float offsetY = 0, ImGuiDockNode* dockNode = nullptr)
+    inline bool Spinner(const char* label, float radius, float thickness, const ImU32& colour, float offsetX = 0, float offsetY = 0, const ImGuiDockNode* dockNode = nullptr)
     {
         if (dockNode)
         {
@@ -106,7 +104,5 @@ namespace ImGui
 
         return SpinnerInternal(label, radius, thickness, colour, offsetX, offsetY);
     }
-
-
 
 }
